@@ -1,0 +1,891 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title> Có một món quà muốn tặng cho chị </title>
+ 
+    <style>
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            overflow: hidden;
+
+            font-family: "Segoe UI", sans-serif;
+
+            background:
+                radial-gradient(circle at 20% 20%, #ffd6e7, transparent 30%),
+                radial-gradient(circle at 80% 80%, #d9d4ff, transparent 30%),
+                linear-gradient(135deg, #fff0f6, #eeeaff);
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+
+        /* =================================
+           MÀN HÌNH BAN ĐẦU
+           ================================= */
+
+        #start {
+            position: fixed;
+
+            width: 100%;
+            height: 100%;
+
+            display: flex;
+            flex-direction: column;
+
+            justify-content: center;
+            align-items: center;
+
+            z-index: 10;
+
+            transition: 1s;
+        }
+
+        #start.hide {
+            opacity: 0;
+            transform: scale(1.3);
+
+            pointer-events: none;
+        }
+
+        .title {
+            color: #ff6093;
+
+            font-size: 28px;
+            font-weight: bold;
+
+            margin-bottom: 40px;
+
+            animation: floating 2s infinite;
+        }
+
+
+        /* =================================
+           HỘP QUÀ
+           ================================= */
+
+        .gift {
+            width: 190px;
+            height: 170px;
+
+            position: relative;
+
+            cursor: pointer;
+
+            animation: floating 2s infinite;
+
+            filter:
+                drop-shadow(
+                    0 20px 25px
+                    rgba(255, 80, 140, 0.3)
+                );
+        }
+
+
+        /* thân */
+
+        .box {
+            position: absolute;
+
+            width: 150px;
+            height: 105px;
+
+            left: 20px;
+            bottom: 0;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #ff8fb4,
+                    #ff4f88
+                );
+
+            border-radius: 8px;
+        }
+
+
+        /* ruy-băng dọc */
+
+        .box::before {
+
+            content: "";
+
+            position: absolute;
+
+            left: 62px;
+
+            width: 26px;
+            height: 100%;
+
+            background: #ffd45c;
+        }
+
+
+        /* nắp */
+
+        .lid {
+
+            position: absolute;
+
+            width: 170px;
+            height: 35px;
+
+            left: 10px;
+            top: 35px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #ff9cbd,
+                    #ff5c91
+                );
+
+            border-radius: 7px;
+
+            z-index: 3;
+
+            transition: 1.8s;
+        }
+
+        .lid::before {
+
+            content: "";
+
+            position: absolute;
+
+            left: 72px;
+
+            width: 26px;
+            height: 35px;
+
+            background: #ffd45c;
+        }
+
+
+        /* nơ */
+
+        .bow {
+
+            position: absolute;
+
+            width: 70px;
+            height: 45px;
+
+            left: 60px;
+            top: 0;
+
+            z-index: 5;
+        }
+
+        .bow::before,
+        .bow::after {
+
+            content: "";
+
+            position: absolute;
+
+            width: 35px;
+            height: 28px;
+
+            background: #ffd45c;
+
+            border-radius: 50%;
+        }
+
+        .bow::before {
+            left: 0;
+            transform: rotate(-30deg);
+        }
+
+        .bow::after {
+            right: 0;
+            transform: rotate(30deg);
+        }
+
+        .bow-center {
+
+            position: absolute;
+
+            width: 25px;
+            height: 25px;
+
+            background: #ffd45c;
+
+            border-radius: 50%;
+
+            left: 22px;
+            top: 10px;
+
+            z-index: 2;
+        }
+
+
+        /* =================================
+           THÁC NỘI DUNG
+           ================================= */
+
+        #waterfall {
+
+            position: fixed;
+
+            inset: 0;
+
+            pointer-events: none;
+
+            z-index: 20;
+        }
+
+
+        .fall-item {
+
+            position: absolute;
+
+            left: 50%;
+            top: 50%;
+
+            opacity: 0;
+
+            transform:
+                translate(-50%, 0)
+                scale(0.8);
+
+            animation:
+                waterfall 3s cubic-bezier(
+                    .2,
+                    .8,
+                    .2,
+                    1
+                ) forwards;
+        }
+
+
+        /* ảnh */
+
+        .fall-image {
+
+            width: 120px;
+            height: 150px;
+
+            object-fit: cover;
+
+            border-radius: 18px;
+
+            box-shadow:
+                0 15px 35px
+                rgba(0,0,0,0.18);
+
+            border: 5px solid white;
+        }
+
+
+        /* chữ */
+
+        .fall-text {
+
+            padding: 15px 22px;
+
+            border-radius: 20px;
+
+            background:
+                rgba(255,255,255,0.9);
+
+            color: #ff6093;
+
+            font-size: 18px;
+            font-weight: bold;
+
+            box-shadow:
+                0 10px 30px
+                rgba(255,100,150,0.2);
+
+            white-space: nowrap;
+        }
+
+
+        /* emoji */
+
+        .emoji {
+
+            font-size: 35px;
+        }
+
+
+        /* =================================
+           CARD CUỐI
+           ================================= */
+
+        #final {
+
+            position: fixed;
+
+            width: min(90%, 500px);
+
+            padding: 35px;
+
+            background:
+                rgba(255,255,255,0.88);
+
+            backdrop-filter: blur(20px);
+
+            border-radius: 30px;
+
+            text-align: center;
+
+            box-shadow:
+                0 30px 80px
+                rgba(150,80,130,0.25);
+
+            opacity: 0;
+
+            transform: scale(0.6);
+
+            pointer-events: none;
+
+            transition:
+                1.5s;
+
+            z-index: 30;
+        }
+
+        #final.show {
+
+            opacity: 1;
+
+            transform: scale(1);
+
+            pointer-events: auto;
+        }
+
+
+        .final-title {
+
+            font-size: 38px;
+
+            color: #ff6093;
+
+            margin-bottom: 20px;
+        }
+
+
+        .final-text {
+
+            color: #555;
+
+            line-height: 1.8;
+
+            font-size: 17px;
+        }
+
+
+        .final-heart {
+
+            font-size: 45px;
+
+            margin-top: 20px;
+
+            animation: heartbeat 1.2s infinite;
+        }
+
+
+        /* =================================
+           ANIMATION
+           ================================= */
+
+        @keyframes floating {
+
+            0%,100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-12px);
+            }
+        }
+
+
+        @keyframes waterfall {
+
+            0% {
+
+                opacity: 0;
+
+                transform:
+                    translate(
+                        -50%,
+                        0
+                    )
+                    scale(0.2)
+                    rotate(0deg);
+            }
+
+            15% {
+
+                opacity: 1;
+            }
+
+            100% {
+
+                opacity: 0;
+
+                transform:
+                    translate(
+                        calc(-50% + var(--x)),
+                        var(--y)
+                    )
+                    scale(1)
+                    rotate(var(--r));
+            }
+        }
+
+
+        @keyframes heartbeat {
+
+            0%,100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.2);
+            }
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+    <!-- =================================
+         MÀN HÌNH HỘP QUÀ
+         ================================= -->
+
+    <div id="start">
+
+        <div class="title">
+            Có một món quà dành cho chị nhoa 🎁
+        </div>
+
+
+        <div
+            class="gift"
+            onclick="openGift()"
+        >
+
+            <div class="bow">
+                <div class="bow-center"></div>
+            </div>
+
+            <div class="lid"></div>
+
+            <div class="box"></div>
+
+        </div>
+
+
+        <p
+            style="
+                margin-top:30px;
+                color:#888;
+            "
+        >
+            Bấm vào hộp quà nhé 💗
+        </p>
+
+    </div>
+
+
+
+    <!-- =================================
+         THÁC NỘI DUNG
+         ================================= -->
+
+    <div id="waterfall"></div>
+
+
+
+    <!-- =================================
+         CARD CUỐI
+         ================================= -->
+
+    <div id="final">
+
+        <div class="final-title">
+              🎉
+        </div>
+
+
+        <p class="final-text">
+
+            Gửi tới chị 💌
+
+            <br><br>
+
+            Mừng ngày một thiên thần được sanh ra 
+
+            <br><br>
+
+            Chúc cho chị iu sẽ có một tuổi mới sẽ thật rực rỡ nhé. 
+
+            <br><br>
+
+            Sẽ có nhiều điều ý nghĩa ngoài kia đang chờ đợi chị đó nhen, đừng để nó trôi qua rồi phải  		hối tiếc, hãy làm bông hoa đẹp nhất của chính mình nha chị.
+
+
+			Tuổi 17 hạnh phúc nhé! 
+
+        </p>
+
+
+        <div class="final-heart">
+            🎂
+        </div>
+
+    </div>
+
+
+
+    <script>
+
+
+        /* =================================
+           DỮ LIỆU THÁC
+           ================================= */
+
+        const items = [
+
+            {
+                type: "emoji",
+                content: "💖"
+            },
+
+            {
+                type: "emoji",
+                content: "✨"
+            },
+
+            {
+                type: "text",
+                content: "Gửi iu iu  🎉"
+            },
+
+            {
+                type: "emoji",
+                content: "🌸"
+            },
+
+            {
+                type: "image",
+                content:
+                "https://images.unsplash.com/photo-1518199266791-5375a83190b7?auto=format&fit=crop&w=500&q=80"
+            },
+
+            {
+                type: "emoji",
+                content: "🎉"
+            },
+
+            {
+                type: "text",
+                content: "Một món quà nhỏ..."
+            },
+
+            {
+                type: "emoji",
+                content: "⭐"
+            },
+
+            {
+                type: "image",
+                content:
+                "https://images.unsplash.com/photo-1494774157365-9e04c6720e0b?auto=format&fit=crop&w=500&q=80"
+            },
+
+            {
+                type: "emoji",
+                content: "🎁"
+            },
+
+            {
+                type: "text",
+                content: "Dành riêng cho muội 🎂"
+            },
+
+            {
+                type: "emoji",
+                content: "✨"
+            },
+
+            {
+                type: "emoji",
+                content: "🎀"
+            },
+
+            {
+                type: "text",
+                content: "Cảm ơn chi đã xuất hiện"
+            },
+
+            {
+                type: "emoji",
+                content: "🎂"
+            },
+
+            {
+                type: "emoji",
+                content: "🌷"
+            }
+
+        ];
+
+
+
+        /* =================================
+           MỞ HỘP
+           ================================= */
+
+        function openGift() {
+
+            const gift =
+                document.querySelector(".gift");
+
+            const lid =
+                document.querySelector(".lid");
+
+            const start =
+                document.getElementById("start");
+
+
+            /*
+                Hộp rung
+            */
+
+            gift.animate(
+
+                [
+                    {
+                        transform:
+                            "scale(1)"
+                    },
+
+                    {
+                        transform:
+                            "scale(1.15) rotate(-5deg)"
+                    },
+
+                    {
+                        transform:
+                            "scale(1.15) rotate(5deg)"
+                    },
+
+                    {
+                        transform:
+                            "scale(1.1)"
+                    },
+
+                    {
+                        transform:
+                            "scale(1)"
+                    }
+                ],
+
+                {
+                    duration: 700
+                }
+
+            );
+
+
+            /*
+                Nắp bật lên
+            */
+
+            setTimeout(() => {
+
+                lid.style.transform =
+                    "translateY(-90px) rotate(-12deg)";
+
+            }, 400);
+
+
+            /*
+                Bắt đầu thác
+            */
+
+            setTimeout(() => {
+
+                createWaterfall();
+
+            }, 700);
+
+
+            /*
+                Ẩn màn hình ban đầu
+            */
+
+            setTimeout(() => {
+
+                start.classList.add("hide");
+
+            }, 1800);
+
+
+            /*
+                Hiện lời nhắn cuối
+            */
+
+            setTimeout(() => {
+
+                document
+                    .getElementById("final")
+                    .classList.add("show");
+
+            }, 5500);
+
+        }
+
+
+
+        /* =================================
+           TẠO THÁC
+           ================================= */
+
+        function createWaterfall() {
+
+            const waterfall =
+                document.getElementById("waterfall");
+
+
+            items.forEach(
+                (item, index) => {
+
+                    setTimeout(() => {
+
+                        const element =
+                            document.createElement("div");
+
+
+                        element.className =
+                            "fall-item";
+
+
+                        /*
+                            Tạo nội dung
+                        */
+
+                        if (item.type === "image") {
+
+                            const img =
+                                document.createElement("img");
+
+                            img.src =
+                                item.content;
+
+                            img.className =
+                                "fall-image";
+
+                            element.appendChild(img);
+
+                        }
+
+                        else if (item.type === "text") {
+
+                            element.innerText =
+                                item.content;
+
+                            element.classList.add(
+                                "fall-text"
+                            );
+
+                        }
+
+                        else {
+
+                            element.innerText =
+                                item.content;
+
+                            element.classList.add(
+                                "emoji"
+                            );
+
+                        }
+
+
+                        /*
+                            Vị trí bay
+                        */
+
+                        const x =
+                            (Math.random() - 0.5)
+                            * 650;
+
+
+                        const y =
+                            -250 -
+                            Math.random() * 350;
+
+
+                        const rotation =
+                            (Math.random() - 0.5)
+                            * 60;
+
+
+                        element.style.setProperty(
+                            "--x",
+                            x + "px"
+                        );
+
+
+                        element.style.setProperty(
+                            "--y",
+                            y + "px"
+                        );
+
+
+                        element.style.setProperty(
+                            "--r",
+                            rotation + "deg"
+                        );
+
+
+                        waterfall.appendChild(
+                            element
+                        );
+
+
+                        /*
+                            Xóa sau animation
+                        */
+
+                        setTimeout(() => {
+
+                            element.remove();
+
+                        }, 3200);
+
+                    },
+
+                    index * 180);
+
+                });
+
+        }
+
+    </script>
+
+</body>
+
+</html>
